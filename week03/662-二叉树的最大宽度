@@ -1,0 +1,45 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int widthOfBinaryTree(TreeNode* root) {
+        queue<pair<TreeNode*,long long>>qu;
+        TreeNode* cur=root;
+        qu.push({root,0});
+        int q=0;
+        long long cake_max=0;
+        while(!qu.empty())
+        {
+            int q=qu.size();
+            long long left=qu.front().second;
+            long long right=left;
+  
+            for(int i=0;i<q;i++)
+            {
+
+                auto[cur,idx]=qu.front();
+                right=idx;
+                qu.pop();
+                if(cur->left!=nullptr)
+                qu.push({cur->left,2*(idx-left)});
+                if(cur->right!=nullptr)
+                qu.push({cur->right,2*(idx-left)+1});
+            }
+            cake_max=max(right-left+1,cake_max);
+        }
+        return cake_max;
+
+
+
+
+    }
+};
