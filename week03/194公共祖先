@@ -1,0 +1,71 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    inline bool dfs(TreeNode*root,vector<int>&ans,const int data){
+        if(root==nullptr)
+        return false;
+        ans.push_back(root->val);
+        if(root->val==data)
+        {
+            return true;
+        }
+        if(dfs(root->left,ans,data))
+        return true;
+        if(dfs(root->right,ans,data))
+        return true;
+        ans.pop_back();
+        return false;
+    }
+
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root==nullptr)
+        return root;
+        vector<int>cake_q;
+        vector<int>cake_p;
+        cake_p.reserve(1000);
+        cake_q.reserve(1000);
+        dfs(root,cake_p,p->val);
+        dfs(root,cake_q,q->val);
+        int locate=0;
+        
+        for(int i=0;i<min(cake_q.size(),cake_p.size());i++)
+        {
+            if(cake_q[i]==cake_p[i])
+            {
+                locate=cake_q[i];
+                
+            }
+            else{
+                break;
+            }
+            
+        }
+ 
+        TreeNode*stk[1000];
+        int idx=0;
+        stk[idx++]=root;
+        while(idx>0)
+        {
+            TreeNode*cur=stk[--idx];
+            if(cur->val==locate)
+            {
+                return cur;
+            }
+            if(cur->right!=nullptr)
+            stk[idx++]=cur->right;
+            if(cur->left!=nullptr)
+            stk[idx++]=cur->left;
+          
+        }
+        return nullptr;
+        
+    }
+};
