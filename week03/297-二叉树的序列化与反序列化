@@ -1,0 +1,135 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if(root==nullptr)
+        return "";
+        queue<TreeNode*>qu;
+        string res;
+        qu.push(root);
+        while(!qu.empty())
+        {
+            TreeNode*cur=qu.front();
+            qu.pop();
+            if(cur==nullptr)
+            {
+                res+="null,";
+            }
+            else
+            {
+                int n=cur->val;
+                res+=to_string(n);
+                res+=",";
+                qu.push(cur->left);
+                qu.push(cur->right);
+            }
+        }
+        if(!res.empty())
+        res.pop_back();
+        return res;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        if(data=="")
+        return nullptr;
+        int m=0;
+        int j=0;
+        bool is_negative=false;
+        if(data[j]=='-')
+        {
+            is_negative=true;
+            j++;
+        }
+        while(data[j]!=',')
+        {
+            m=m*10+(data[j]-'0');
+            j++;
+        }
+        if(is_negative)
+        m=-m;
+        TreeNode*root=new TreeNode(m);
+        TreeNode*cur=root;
+        queue<TreeNode*>qu;
+        qu.push(root);
+        int start=j+1;
+        int n=data.size();
+        while(start<n&&!qu.empty())
+        {
+            cur=qu.front();
+            qu.pop();
+        
+            if(start>=n)break; 
+            int end=start;
+            while(data[end]!=','&&end<n)end++;
+            string left_str=data.substr(start,end-start);
+            bool left_negative=false;
+            if(left_str!="null")
+            {
+                int k=0;
+                int k1=0;
+                if(left_str[0]=='-')
+                {
+                    left_negative=true;
+                    k++;
+                }
+                for(;k<left_str.size();k++)
+                {
+                    k1=k1*10+(left_str[k]-'0');
+                }
+                if(left_negative)
+                k1=-k1;
+
+                TreeNode*left=new TreeNode(k1);
+                cur->left=left;
+                qu.push(cur->left);
+            }
+            start=end+1;
+
+            if(start>=n)break;
+            end=start;
+            while(data[end]!=','&&end<n)end++;
+            string right_str=data.substr(start,end-start);
+            bool right_negative=false;
+            if(right_str!="null")
+            {
+                int k=0;
+                int k1=0;
+                if(right_str[k]=='-')
+                {
+                    right_negative=true;
+                    k++;
+                }
+                for(;k<right_str.size();k++)
+                {
+                    k1=k1*10+(right_str[k]-'0');
+                }
+                if(right_negative)
+                k1=-k1;
+                TreeNode*right=new TreeNode(k1);
+                cur->right=right;
+                qu.push(cur->right);
+            }
+            start=end+1;
+
+
+        }
+        return root;
+
+        
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
